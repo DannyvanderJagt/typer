@@ -19,7 +19,7 @@ var _settings = {
 var Typer = {
     Type: function Type(schema, obj) {
         var result = (0, _typeCheck.typeCheck)(schema, obj);
-        if (_settings['throw']) {
+        if (!_settings['throw']) {
             throw new Error('The type test did not pass! Schema:' + schema);
         }
         return result;
