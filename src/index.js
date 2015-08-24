@@ -8,7 +8,7 @@ let _settings = {
 var Typer = {
     Type(schema, obj){
         let result = TypeCheck(schema, obj);
-        if(!_settings.throw){
+        if(_settings.throw && !result){
             throw new Error('The type test did not pass! Schema:' + schema);
         }
         return result;
