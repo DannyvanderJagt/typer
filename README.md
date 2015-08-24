@@ -6,7 +6,22 @@ A wrapper around commonly used type checkers.
 import Typer, {Type as Type} from 'typer';
 ```
 
+## Settings
+* `throw` - Throw type errors instead of returning `true` or `false`. (default: false)
+
+Example:
+```js
+{
+    throw: true
+}
+```
+
 ## Api
+
+### `set`
+Set Typer settings.
+`Typer.set(settings);`
+
 ### `Type`
 See docs from [type-check](https://github.com/gkz/type-check)
 

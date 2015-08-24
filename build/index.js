@@ -14,10 +14,19 @@ var _typeCheck = require('type-check');
 
 var _typeCheck2 = _interopRequireDefault(_typeCheck);
 
+var _settings = {
+    'throw': false
+};
+
 var Typer = {
-    Type: function Type() {
+    Type: function Type(schema, obj) {
         var result = (0, _typeCheck2['default'])(schema, obj);
         return result;
+    },
+    set: function set(settings) {
+        this.Type('Object', settings);
+        _settings = Object.assign(_settings, settings);
+        console.log(_settings);
     },
     isString: function isString(obj) {
         return _util2['default'].isString(obj);
@@ -31,4 +40,8 @@ var Typer = {
 };
 
 exports['default'] = Typer;
+
+Typer.set({
+    'throw': true
+});
 module.exports = exports['default'];
