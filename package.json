@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "main": "build/index.js",
+  "es6": "src/index.js",
   "dependencies": {
     "type-check": "^0.3.1"
   },
