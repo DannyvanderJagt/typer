@@ -18,21 +18,38 @@ Example:
 
 ## Api
 
-### `set`
-Set Typer settings.
-`Typer.set(settings);`
+```js
 
-### `Type`
-See docs from [type-check](https://github.com/gkz/type-check)
+// Single elements.
+`a:String, b:Number`
 
-### `isString`
-A check to see if it is a string or not. ([util](https://nodejs.org/api/util.html))   
-`Typer.isString(data)`   
+// Object
+`c:{a:String, b:Number}`
 
-### `isArray`
-A check to see if it is a array or not. ([util](https://nodejs.org/api/util.html))  
-`Typer.isArray(data)`
+// Object in Object.
+`c:{
+    a:{
+        b:String,
+        c:String
+    },
+    b:Number
+}`
 
-### `isObject`
-A check to see if it is a object or not. ([util](https://nodejs.org/api/util.html))  
-`Typer.isObject(data)`
+// Array
+`a:[String, Number]`
+
+
+// TODO
+// Or statement.
+`a:String | Number, b:Boolean | String`
+// Output: {a:String, b:Boolean}
+
+// Optional.
+`a:String, b:?Boolean`
+
+// Default value.
+`a:String{test}, b:Boolean{true}`
+
+// When a isn't a string it will be 'test'
+// When b is not a boolean it will be true
+```
