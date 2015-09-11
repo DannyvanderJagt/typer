@@ -53,3 +53,39 @@ Example:
 // When a isn't a string it will be 'test'
 // When b is not a boolean it will be true
 ```
+
+## Schema
+Input: SchemaString
+Output: Elements
+
+**Element**
+```js
+{
+    key: String,
+    type: [Type, orThisType],
+    optional: true/false
+    defaultValue: "some value",
+}
+```
+
+
+### Create value map.
+```js
+// Input:
+Typer('func', 
+    `a:String | Number, b:{c:Boolean, d:Number}`,
+    10,
+    {
+        b: true,
+        d: 1204
+    }
+);
+
+// Output:
+{
+    a: {_type:Number},
+    b: {_type:Array, c:{_type:Boolean}, d:{_type:Number}} 
+}
+
+
+```

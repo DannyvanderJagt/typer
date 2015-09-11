@@ -15,6 +15,12 @@ let Check = {
     },
     boolean(arg){
         return Util.isBoolean(arg);
+    },
+    'function'(arg){
+        return Util.isFunction(arg);
+    },
+    phone(arg){
+        return arg.match(/[0-9]{2}\-[0-9]{8}/) ? true : false;
     }
 };
 
