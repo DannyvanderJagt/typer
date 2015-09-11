@@ -2,16 +2,13 @@
   "name": "typer",
   "version": "0.0.1",
   "description": "",
-  "main": "build/index.js",
+  "main": "src/babel.js",
   "es6": "src/index.js",
-  "dependencies": {
-    "type-check": "^0.3.1"
-  },
   "devDependencies": {
     "babel": "^5.8.21"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "build": "babel src --out-dir build --ignore babel.js"
   },
   "repository": {
@@ -23,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/DannyvanderJagt/typer/issues"
   },
-  "homepage": "https://github.com/DannyvanderJagt/typer#readme"
+  "homepage": "https://github.com/DannyvanderJagt/typer#readme",
+  "dependencies": {
+    "chai": "^3.2.0",
+    "mocha": "^2.3.2"
+  }
 }
