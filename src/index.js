@@ -3,6 +3,8 @@ import {typeCheck as TypeCheck} from 'type-check';
 import Schema from './schema';
 import Checks from './checks';
 
+import Typer2 from './index2';
+
 var Typer = {
     type(){
         let args = [];
@@ -14,50 +16,24 @@ var Typer = {
             return;
         }
         
-        // for(let i = 0; i < len; i += 2){
-        //     let schema = Schema.generate(arguments[i]);
-        //     if(schema.length > 1){
-        //         console.log('The schema is not valid!');
-        //         return;
-        //     }
-        //     
-        //     args.push({
-        //         schema: schema[0],
-        //         data: arguments[i+1]
-        //     });
-        // }
-        // 
-        // // Type check everything!
-        // args.forEach((arg, pos) => {
-        //     let valid = this.check(arg);
-        //     if(valid !== true){
-        //         errors = errors.concat(valid);
-        //     }
-        // });
-        
-        // Bundle the schemas to improve speed.
-        let _schema = [];
-        let data = [];
         for(let i = 0; i < len; i += 2){
-            _schema.push(arguments[i]);
-            data.push(arguments[i+1]);
-        }
-        
-        // Type check everything!
-        _schema.forEach((schema, pos) => {
-            let valid = this.check({schema, data:data[pos]});
+            let schema = Schema.generate(arguments[i]);
+            if(schema.length > 1){
+                console.log('The schema is not valid!');
+                return;
+            }
+            
+            let valid = this.check({schema, data:arguments[i+1]});
             if(valid !== true){
                 errors = errors.concat(valid);
             }
-        });
+        }
         
-        // console.log(errors.length === 0 ? true : errors);
         return errors.length === 0 ? true : errors; 
     },
     check({schema, data}){
         if(schema.type === 'single'){
-            let type = schema.value;
-            return this.checkSingle(schema.key, type, data);
+            return this.checkSingle(schema.key, schema.value, data);
         }else if(schema.type === 'array'){
             return this.checkArray(schema, data);
         }else if(schema.type === 'object'){
@@ -126,45 +102,96 @@ var Typer = {
 // Typer.type('String', 'Hello world!');
 // Typer.type('Function', ()=>{});
 // Typer.type('Number', 102);
-// Typer.type('{a:Number, b:String}', {a:'1', b:'a'});
+
+
+// start('whole');
+// console.log('test', Typer.type('{a:Number, b:String}', {a:1, b:'a'}));
+// stop('whole');
+// console.log('test', Typer.type('[Number, String]', [10, 'world!']));
+
+// console.log('test', Typer.type('{a:Number, b:String}', {a:1, b:'a'}, 'Number', '10'));
+
 
 // Typer.type('[Number, String]', [10, 'world!']);
-
+// console.log('result', Typer.type('{a:Number, b:String}', {a:'1', b:'a'}));
 // Custom types.
 // Typer.type('Phone', '06-11151622');
+// 
 
 // console.time('pre');
 // console.log('hi');
 // console.timeEnd('pre');
 // 
 // console.time('typecheck');
+// let b = process.hrtime();
 // for(let i = 0; i < 100000; i ++){
 //     TypeCheck('Number', 10);
-//     TypeCheck('{a:Number, b:String}', {a:'1', b:'a'});
+//     TypeCheck('{a:Number, b:String}', {a:1, b:'a'});
+//     TypeCheck('Number', 10);
+//     TypeCheck('{a:Number, b:String}', {a:1, b:'a'});
 // }
+// console.log(process.hrtime(b));
 // console.timeEnd('typecheck');
-// 
-// 
+
 // console.time('typer');
-// for(let i = 0; i < 100000; i ++){
-//     // Typer.type('Number', 10);
-//     Typer.type('{a:Number, b:String}', {a:'1', b:'a'}, 'Number', 10);
-// }
-// console.timeEnd('typer');
+// let a = process.hrtime();
+// // for(let i = 0; i < 100000; i ++){
+//     Typer.type2({a:Number,b:String}, {a:1, b:'a'});
+//     // Typer.type('{a:Number, b:String}', {a:1, b:'a'},'Number', 10,'{a:Number, b:String}', {a:1, b:'a'},'Number', 10);
+//     //  Typer.type('{a:Number, b:String}', {a:1, b:'a'});
+//     //  Typer.type('Number', 10);
+//     //  Typer.type('Number', 10);
+//     //  Typer.type('{a:Number, b:String}', {a:1, b:'a'});
+// // }
+// console.log(process.hrtime(a));
+// // console.timeEnd('typer');
+// 
+
+
+// console.log(Typer.type('Number', '10'));
+
+
+// Typer.type('{a:Number, b:String}', {a:1, b:'a'});
 
 
 
+console.time('typecheck');
+// let b = process.hrtime();
+for(let i = 0; i < 100000; i ++){
+    TypeCheck('Number', 10);
+    TypeCheck('{a:Number, b:String}', {a:1, b:'a'});
+    TypeCheck('[Number]', [1,2]);
+    // TypeCheck('Number', 10);
+    // TypeCheck('{a:Number, b:String}', {a:1, b:'a'});
+}
+// console.log(process.hrtime(b));
+console.timeEnd('typecheck');
+
+console.time('typer');
+// let a = process.hrtime();
+for(let i = 0; i < 100000; i ++){
+    Typer.type('Number', 10);
+    Typer.type('{a:Number, b:String}', {a:1, b:'a'});
+    Typer.type('[Number,String]', [1, 'hi']);
+}
+console.timeEnd('typer');
 
 
-
-
-
-
-
-
-
-
-
+console.time('typer2');
+// let c = process.hrtime();
+for(let i = 0; i < 100000; i ++){
+    // Typer2.type(Number, 10);
+    Typer2.type([Number, String], [1,'hi'], Number, 10, {a:Number, b:String}, {a:1, b:'a'});
+    
+    // console.log(Typer.type({a:Number,b:String}, {a:1, b:'a'}));
+    // Typer.type('{a:Number, b:String}', {a:1, b:'a'},'Number', 10,'{a:Number, b:String}', {a:1, b:'a'},'Number', 10);
+    //  Typer.type('{a:Number, b:String}', {a:1, b:'a'});
+    //  Typer.type('Number', 10);
+    //  Typer.type('Number', 10);
+    //  Typer.type('{a:Number, b:String}', {a:1, b:'a'});
+}
+// console.log(process.hrtime(c));
+console.timeEnd('typer2');
 
 
 

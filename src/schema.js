@@ -1,112 +1,63 @@
+
 var Schema = {
     generate(){
-        let schema = arguments[0];
-        schema = schema.replace(/[\s\n]+/g,'');
-        
-        let lines = this.getLines(schema);
-        
-        let elements = this.getElements(lines); 
-
-        return elements;
+        let schema = arguments[0].replace(/[\s\n]+/g,'');
+        return this.getElements(schema); 
     },
-    getValues(parts, type){
-        let value = [];
-        let key = null;
+    getElements(line){            
+        let parts = line.split(/([\{\}\[\]\,])/g);
         
-        if(type === 'array' || type === 'object'){
-            let closingBracket = type === 'array' ? ']' : '}';
-            let openingBracket = type === 'array' ? '[' : '{';
-            let key = null;
-            let object = type === 'array' ? [] : {};
-            
-            parts.map((part) => {
-                if(part === openingBracket || part === closingBracket || part === ','){
-                    return;
-                }
-                let _key = part.match(/([\w]+)\:/);
-                if(_key){
-                    key = _key[1];
-                }else{
-                    if(!key){
-                        key = object.length;
-                    }
-                    if(type === 'array'){
-                        object.push({key, type:part});
-                    }else{
-                        object[key] = part;
-                    }
-                    key = null;
-                }
-            });
-            value = object;
-        }
-        
-        if(type === 'single'){
-            return parts[0];
-        }
-        
-        return value;
-    },
-    getElements(lines){
-        return lines.map((elem) => {
-            let parts = elem.match(/(\??([\w]+)?\:)|[\{\[\]\}]+|[\w]+|\,/g);
-            let keyParts = parts[0].match(/(\?)?([\w]+)?\:/);
-            let key = null;
-            let type = null;
-            let optional = false;
-            
-            if(keyParts){
-                key = keyParts[2];
-                optional = keyParts[1] ? true : false;
-            }
-    
-            let _values = parts.splice(keyParts ? 1 : 0 ,parts.length);
-
-            // Determen the type.
-            if(!type && _values[0] === '['){ type = 'array'; }
-            else if(!type && _values[0] === '{'){ type = 'object'; }
-            else { type = 'single'; }
-            
-            let value = this.getValues(_values, type);
-            
+        if(parts.length === 1){
             return {
-                key,
-                type,
-                optional,
-                value
+                key:null,
+                type:'single',
+                value: parts[0]
             };
-        });
-    },
-    getLines(schema){
-        let _elems = schema.match(/(\??([\w]+)?\:)?[\w\{\}\:\[\]\s]+|\,/g);
-        _elems.push(','); // Trick to trigger a check for the last element.
+        }
+
+        let keyParts = parts[0].split(':');
+        let key = null;
+        let type = null;
+        if(keyParts.length === 2){
+            key = keyParts[0];
+        }
+        let _values = parts.splice(keyParts ? 1 : 0 ,parts.length);
         
-        let elements = [];
+        // Determen the type.
+        if(_values[0] === '['){ type = 'array'; }
+        else if(_values[0] === '{'){ type = 'object'; }
+        else { type = 'single'; }
         
-        let opening = 0;
-        let closing = 0;
-        let temp = [];
+        let values;
         
-        _elems.forEach((elem) => {
-            if(elem === ','){
-                if(opening === closing){
-                    elements.push(temp.join(','));
-                    temp = [];
-                    opening = 0;
-                    closing = 0;
-                }
-                return;
+        if(type === 'object'){
+            values = {};
+            let len = _values.length;
+            for(let i = 1; i < len; i+=2){
+                let val = _values[i];
+                let _vals  = val.split(':');
+                let _key = _vals.length === 2 ? _vals[0] : values.length;
+                values[_key] = _vals.length === 2 ? _vals[1] : _vals[0];
             }
-            
-            let _opening = elem.match(/[\{\[]+/g) || 0;
-            let _closing = elem.match(/[\}\]]+/g) || 0;
-            
-            if(_opening){ opening += _opening.length; }
-            if(_closing){ closing += _closing.length; }
-            
-            temp.push(elem);
-        });
-        return elements;
+        }else if(type === 'array'){
+            values = [];
+            let len = _values.length;
+            for(let i = 1; i < len; i+=2){
+                let val = _values[i];
+                let _vals  = val.split(':');
+                let _key = _vals.length === 2 ? _vals[0] : values.length;
+                values.push({
+                    key: _key,
+                    type: _vals.length === 2 ? _vals[1] : _vals[0],
+                });
+            }
+        }
+    
+        return {
+            key,
+            type,
+            value:values
+        };
     }
 };
 

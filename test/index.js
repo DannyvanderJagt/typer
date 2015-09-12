@@ -1,2 +1,2 @@
+// Enable es6.
 require('babel/register');
-require('./index2.js');

@@ -11,7 +11,7 @@ let Check = {
         return Util.isArray(arg);
     },
     object(arg){
-        return Util.isObject(arg);
+        return Util.isObject(arg) && !Util.isArray(arg);
     },
     boolean(arg){
         return Util.isBoolean(arg);
