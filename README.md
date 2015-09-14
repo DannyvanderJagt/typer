@@ -1,3 +1,7 @@
+> **Disclaimer: This repo is part of my personal project named Suitcase.**  
+> It is not meant to be used by other people or in production.    
+> You can use it if you want but at your own risk.
+
 # Typer
 A wrapper around commonly used type checkers.
 
