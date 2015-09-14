@@ -1,6 +1,6 @@
 {
   "name": "typer",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "",
   "main": "src/babel.js",
   "es6": "src/index.js",
@@ -8,7 +8,7 @@
     "babel": "^5.8.21"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --compilers js:babel/register --recursive",
     "build": "babel src --out-dir build --ignore babel.js"
   },
   "repository": {

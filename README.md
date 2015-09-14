@@ -3,7 +3,7 @@ A wrapper around commonly used type checkers.
 
 ## Usage:
 ```js
-import Typer, {Type as Type} from 'typer';
+import {Type} from 'typer';
 ```
 
 ## Settings
@@ -12,7 +12,8 @@ import Typer, {Type as Type} from 'typer';
 Example:
 ```js
 {
-    throw: true
+    throw: true, // Default: false
+    event: true, // Default: false
 }
 ```
 
@@ -21,71 +22,26 @@ Example:
 ```js
 
 // Single elements.
-`a:String, b:Number`
+Type(String, 'Hello world!', Number, 10); // true.
 
 // Object
-`c:{a:String, b:Number}`
-
-// Object in Object.
-`c:{
-    a:{
-        b:String,
-        c:String
-    },
-    b:Number
-}`
+Type({a:String, b:Number}, {a:'Hello', b:10}); // true.
 
 // Array
-`a:[String, Number]`
-
-
-// TODO
-// Or statement.
-`a:String | Number, b:Boolean | String`
-// Output: {a:String, b:Boolean}
-
-// Optional.
-`a:String, b:?Boolean`
-
-// Default value.
-`a:String{test}, b:Boolean{true}`
-
-// When a isn't a string it will be 'test'
-// When b is not a boolean it will be true
-```
-
-## Schema
-Input: SchemaString
-Output: Elements
-
-**Element**
-```js
-{
-    key: String,
-    type: [Type, orThisType],
-    optional: true/false
-    defaultValue: "some value",
-}
-```
-
-
-### Create value map.
-```js
-// Input:
-Typer('func', 
-    `a:String | Number, b:{c:Boolean, d:Number}`,
-    10,
-    {
-        b: true,
-        d: 1204
-    }
-);
-
-// Output:
-{
-    a: {_type:Number},
-    b: {_type:Array, c:{_type:Boolean}, d:{_type:Number}} 
-}
-
+Type([String, Number], ['Hello', 10]); // true.
 
 ```
+
+## Todo
+
+#### Error message
+- [ ] Improve the error messages
+- [ ] Added length error messages Array
+- [ ] Added missing keys/extra keys in Object
+
+#### Features
+- [ ] Type maps
+- [ ] Convert to type
+- [ ] Error events.
+- [ ] Throw errors.
+- [ ] Added new Error().stack possibility.
