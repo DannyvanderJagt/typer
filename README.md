@@ -17,7 +17,7 @@ Example:
 ```js
 {
     throw: true, // Default: false
-    event: true, // Default: false
+    event: true, // Default: true - event:'error'
 }
 ```
 
@@ -46,6 +46,6 @@ Type([String, Number], ['Hello', 10]); // true.
 #### Features
 - [ ] Type maps
 - [ ] Convert to type
-- [ ] Error events.
-- [ ] Throw errors.
+- [x] Error events.
+- [x] Throw errors.
 - [ ] Added new Error().stack possibility.

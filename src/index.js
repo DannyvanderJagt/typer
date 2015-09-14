@@ -1,20 +1,48 @@
+import {EventEmitter} from 'events';
 import Checks from './checks';
 
-var Typer = {
-    type(){
-        let args = [];
-        let len = arguments.length;
+let EE = new EventEmitter();
+
+let Typer = {
+    _settings: {
+        throw: false,
+        event: true,
+    },
+    EE: new EventEmitter(),
+    Typef(functionName, ...args){
+        let errors = this._type(args);
+        if(errors === true){
+            return true;
+        }
+        
+        this._error(functionName, errors);
+        return errors;
+    },
+    Type(...args){
+        let errors = this._type(args);
+        if(errors === true){
+            return true;
+        }
+        
+        this._error(null, errors);
+        return errors;
+    },
+    settings(newSettings){
+        return Object.assign(this.settings, newSettings);
+    },
+    _type(args){
+        let len = args.length;
         let errors = [];
         
         if(len%2 === 1){
-            console.log('Expected an equale number of arguments!');
+            errors.push('Expected an equale number of arguments!');
             return;
         }
         
         for(let i = 0; i < len; i += 2){
-            let valid = this.check(
-                arguments[i],
-                arguments[i+1]
+            let valid = this._check(
+                args[i],
+                args[i+1]
             );
             if(valid !== true){
                 errors = errors.concat(valid);
@@ -22,24 +50,37 @@ var Typer = {
         }
         return errors.length === 0 ? true : errors; 
     },
-    getType(type){
+    on: EE.on.bind(EE),
+    _error(functionName, error){
+        if(this._settings.throw){
+            throw new Error('Typer: Your schema doesnt match with the data!');
+        }
+        
+        if(this._settings.event){
+            EE.emit('error', {
+                function: functionName,
+                error
+            });
+        }
+    },
+    _getType(type){
         if(Checks.function(type)){
             return type.name;
         }else if(Checks.string(type)){
             return type;
         }
     },
-    check(schema, data){
+    _check(schema, data){
         if(Checks.object(schema)){
-            return this.checkObject(schema, data);
+            return this._checkObject(schema, data);
         }else if(Checks.array(schema)){
-            return this.checkArray(schema, data);
+            return this._checkArray(schema, data);
         }else{
-            return this.checkSingle(null, this.getType(schema), data);
+            return this._checkSingle(null, this._getType(schema), data);
         }
         return true;
     },
-    checkObject(schema, data){
+    _checkObject(schema, data){
         let errors = [];
         let items = Object.keys(schema);
         let len = items.length;
@@ -56,26 +97,26 @@ var Typer = {
                     message: 'This element isnt available in your data!'
                 };
             }
-            let valid = this.checkSingle(_key, this.getType(schema[_key]), data[_key]);
+            let valid = this._checkSingle(_key, this._getType(schema[_key]), data[_key]);
             if(valid !== true){
                 errors.push(valid);
             }
         }
         return errors.length === 0 ? true : errors; 
     },
-    checkArray(schema, data){
+    _checkArray(schema, data){
         let errors = [];
         let len = schema.length;
         
         for(let pos = 0; pos < len; pos++){ 
-            let valid = this.checkSingle(pos, this.getType(schema[pos]), data[pos]);
+            let valid = this._checkSingle(pos, this._getType(schema[pos]), data[pos]);
             if(valid !== true){
                 errors.push(valid);
             }
         }
         return errors.length === 0 ? true : errors; 
     },
-    checkSingle(key, type, data){
+    _checkSingle(key, type, data){
         type = type.toLowerCase();
         let message, valid;
         
@@ -100,7 +141,9 @@ var Typer = {
     }
 };
 
-let Type = Typer.type.bind(Typer);
 
-export default Typer;
-export {Type};
+let Type = Typer.Type.bind(Typer);
+let Typef = Typer.Typef.bind(Typer);
+let settings = Typer.settings.bind(Typer);
+
+export {Type, Typef, settings};
