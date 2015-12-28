@@ -73,7 +73,7 @@ var Typer = {
                 return {
                     key: _key,
                     type: schema.value[_key].type,
-                    data: data[_key],
+                    value: data[_key],
                     message: 'This element isnt available in your data!'
                 };
             }
@@ -110,7 +110,7 @@ var Typer = {
                 return true;
             }
 
-            message = ['It has the type of ', Object.prototype.toString.call(data), ' but is should be ', type].join('');
+            message = ['The type should be ', type, ' instead of ', Object.prototype.toString.call(data)].join('');
         }
         // Error message.
         return { key: key, type: type, data: data, message: message };

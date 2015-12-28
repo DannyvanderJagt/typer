@@ -7,18 +7,7 @@ A wrapper around commonly used type checkers.
 
 ## Usage:
 ```js
-import {Type} from 'typer';
-```
-
-## Settings
-* `throw` - Throw type errors instead of returning `true` or `false`. (default: false)
-
-Example:
-```js
-{
-    throw: true, // Default: false
-    event: true, // Default: true - event:'error'
-}
+import Typer from 'typer';
 ```
 
 ## Api
@@ -26,14 +15,30 @@ Example:
 ```js
 
 // Single elements.
-Type(String, 'Hello world!', Number, 10); // true.
+var result = Typer(String, 'Hello world!', Number, 10); // result: true
 
 // Object
-Type({a:String, b:Number}, {a:'Hello', b:10}); // true.
+var result = Typer({a:String, b:Number}, {a:'Hello', b:10}); // result: true
 
 // Array
-Type([String, Number], ['Hello', 10]); // true.
+var result = Typer([String, Number], ['Hello', '10']); // result: true
 
+// Error
+var result = Typer({a:String, b:Number}, {a:'Hello', b:'10'}); // result: [Error]
+
+```
+
+## Error
+```js
+  [
+    // One error.
+    {
+      key: 'b',
+      type: Number,
+      value: '10',
+      message: 'The type should be Number instead of [Object String]'
+    }
+  ]
 ```
 
 ## Todo
