@@ -1,30 +1,12 @@
-import {EventEmitter} from 'events';
 import Checks from './checks';
 
-let EE = new EventEmitter();
-
 let Typer = {
-    _settings: {
-        throw: false,
-        event: true,
-    },
-    EE: new EventEmitter(),
-    Typef(functionName, ...args){
+    execute(...args){
         let errors = this._type(args);
         if(errors === true){
             return true;
         }
         
-        this._error(functionName, errors);
-        return errors;
-    },
-    Type(...args){
-        let errors = this._type(args);
-        if(errors === true){
-            return true;
-        }
-        
-        this._error(null, errors);
         return errors;
     },
     settings(newSettings){
@@ -49,19 +31,6 @@ let Typer = {
             }
         }
         return errors.length === 0 ? true : errors; 
-    },
-    on: EE.on.bind(EE),
-    _error(functionName, error){
-        if(this._settings.throw){
-            throw new Error('Typer: Your schema doesnt match with the data!');
-        }
-        
-        if(this._settings.event){
-            EE.emit('error', {
-                function: functionName,
-                error
-            });
-        }
     },
     _getType(type){
         if(Checks.function(type)){
@@ -141,9 +110,4 @@ let Typer = {
     }
 };
 
-
-let Type = Typer.Type.bind(Typer);
-let Typef = Typer.Typef.bind(Typer);
-let settings = Typer.settings.bind(Typer);
-
-export {Type, Typef, settings};
+export default Typer.execute.bind(Typer);
