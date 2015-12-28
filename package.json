@@ -4,9 +4,6 @@
   "description": "",
   "main": "src/babel.js",
   "es6": "src/index.js",
-  "devDependencies": {
-    "babel": "^5.8.21"
-  },
   "scripts": {
     "test": "mocha --compilers js:babel/register --recursive",
     "build": "babel src --out-dir build --ignore babel.js"
@@ -21,8 +18,9 @@
     "url": "https://github.com/DannyvanderJagt/typer/issues"
   },
   "homepage": "https://github.com/DannyvanderJagt/typer#readme",
-  "dependencies": {
+  "devDependencies": {
     "chai": "^3.2.0",
-    "mocha": "^2.3.2"
+    "mocha": "^2.3.2",
+    "babel-preset-es2015": "^6.3.13"
   }
 }
